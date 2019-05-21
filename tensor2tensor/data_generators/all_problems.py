@@ -93,6 +93,7 @@ MODULES = [
     "tensor2tensor.data_generators.wikitext103",
     "tensor2tensor.data_generators.wsj_parsing",
     "tensor2tensor.data_generators.wnli",
+    "tensor2tensor.data_generators.xsum.xsum",
     "tensor2tensor.data_generators.yelp_polarity",
     "tensor2tensor.data_generators.yelp_full",
     "tensor2tensor.envs.mujoco_problems",
