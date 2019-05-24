@@ -33,6 +33,13 @@ from tensor2tensor.utils import registry
 import tensorflow as tf
 
 
+del_patt = re.compile(r"\[[auw/].*\]")
+
+
+def preprocess(text):
+    return _normalize_text(del_patt.sub('', text))
+
+
 def _normalize_text(text):
     text = text.lower()
     # Space around punctuation
@@ -94,7 +101,7 @@ class XSum(problem.Problem):
                 data = json.loads(line)
                 for sen in data['sentences'] + data['summary']:
                     total_chars += len(sen)
-                    yield _normalize_text(sen)
+                    yield preprocess(sen)
 
         tf.logging.info("Built vocabulary using %d chars", total_chars)
 
@@ -131,14 +138,14 @@ def produce_examples(input_file, data_dir, vocab_path, out_filepaths):
             for line in f:
                 data = json.loads(line)
                 inputs = []
-                for sen in data['textrank']:
+                for sen in data['sentences']:
                     if len(inputs) >= 1e6:
                         break
-                    inputs.extend(vocab.encode(_normalize_text(sen) + " "))
+                    inputs.extend(vocab.encode(preprocess(sen) + " "))
 
                 targets = []
                 for sen in data['summary']:
-                    targets.extend(vocab.encode(_normalize_text(sen) + " "))
+                    targets.extend(vocab.encode(preprocess(sen) + " "))
 
                 inputs.append(text_encoder.EOS_ID)
                 targets.append(text_encoder.EOS_ID)
